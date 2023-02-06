@@ -12,6 +12,7 @@ while food_portions and stamina_potions:
     if not food_portions or not stamina_potions:
         break
 
+        
     food = food_portions.pop()
     stamina = stamina_potions.popleft()
     days += 1
