@@ -4,6 +4,7 @@ magic = deque([int(x) for x in input().split(" ")])
 
 gifts = {"Gemstone": 0, "Porcelain Sculpture": 0, "Gold": 0, "Diamond Jewellery": 0}
 
+
 while materials and magic:
     current_material = materials.pop()
     current_magic = magic.popleft()
