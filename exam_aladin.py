@@ -23,6 +23,7 @@ while materials and magic:
     if 100 > sum_ > 499:
         continue
 
+        
     if 100 <= sum_ <= 199:
         gifts["Gemstone"] += 1
     elif 200 <= sum_ <= 299:
