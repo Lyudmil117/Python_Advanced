@@ -20,6 +20,7 @@ while materials and magic:
     elif sum_ > 499:
         sum_ = sum_ / 2
 
+        
     if 100 > sum_ > 499:
         continue
 
