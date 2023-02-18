@@ -64,3 +64,5 @@ if materials:
 for k, v in gifts.items():
     if v > 0:
         print(f'{k}: {v}')
+
+        
