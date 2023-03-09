@@ -30,7 +30,7 @@ while food_portions and stamina_potions:
                     climbed_peaks.append(current_peak)
                     break
                 else:
-                    continue
+                    continue 
 
 if len(climbed_peaks) == 5 and days <= 7:
     print(f'Alex did it! He climbed all top five Pirin peaks in one week -> @FIVEinAWEEK')
