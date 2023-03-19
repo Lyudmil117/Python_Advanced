@@ -16,3 +16,12 @@ class reverse_iter:
 reversed_list = reverse_iter([1, 2, 3, 4])
 for item in reversed_list:
     print(item)
+
+    # REVERSED STRING
+    
+ def reverse_text(text):
+    for i in range(len(text) -1, -1, -1):
+        yield text[i]
+
+for char in reverse_text("step"):
+    print(char, end='')
