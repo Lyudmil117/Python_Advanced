@@ -8,6 +8,7 @@ class Account:
         self.balance += amount
         return self.balance
 
+    
     def debit(self, amount):
         if self.balance >= amount:
             self.balance -= amount
