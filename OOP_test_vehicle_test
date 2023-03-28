@@ -1,0 +1,73 @@
+from typing import ClassVar
+
+
+class Vehicle:
+    DEFAULT_FUEL_CONSUMPTION: ClassVar[float] = 1.25
+    fuel_consumption: float
+    fuel: float
+    capacity: float
+    horse_power: float
+
+    def __init__(self, fuel: float, horse_power: float):
+        self.fuel = fuel
+        self.capacity = self.fuel
+        self.horse_power = horse_power
+        self.fuel_consumption = self.DEFAULT_FUEL_CONSUMPTION
+
+    def drive(self, kilometers):
+        fuel_needed = self.fuel_consumption * kilometers
+        if self.fuel < fuel_needed:
+            raise Exception("Not enough fuel")
+        self.fuel -= fuel_needed
+
+    def refuel(self, fuel):
+        if self.fuel + fuel > self.capacity:
+            raise Exception("Too much fuel")
+        self.fuel += fuel
+
+    def __str__(self):
+        return f"The vehicle has {self.horse_power} " \
+               f"horse power with {self.fuel} fuel left and {self.fuel_consumption} fuel consumption"
+
+
+------------------
+
+from unittest import TestCase, main
+from project.vehicle import Vehicle
+
+class VehicleTest(TestCase):
+    def setUp(self) -> None:
+        self.vehicle = Vehicle(50.5, 100.5)
+
+    def test_correct_initiation(self):
+        self.assertEqual(50.5, self.vehicle.fuel)
+        self.assertEqual(self.vehicle.fuel, self.vehicle.capacity)
+        self.assertEqual(100.5, self.vehicle.horse_power)
+        self.assertEqual(1.25, self.vehicle.DEFAULT_FUEL_CONSUMPTION)
+
+    def test_drive_without_enough_fuel(self):
+        with self.assertRaises(Exception) as ex:
+            self.vehicle.drive(1000)
+        self.assertEqual("Not enough fuel", str(ex.exception))
+
+    def test_drive_method(self):
+        self.vehicle.drive(5)
+        self.assertEqual(44.25, self.vehicle.fuel)
+
+    def test_refuel_invalid_input(self):
+        with self.assertRaises(Exception) as ex:
+            self.vehicle.refuel(100)
+
+        self.assertEqual("Too much fuel", str(ex.exception))
+
+    def test_refuel_method(self):
+        self.vehicle.fuel = 10
+        self.vehicle.refuel(10)
+        self.assertEqual(self.vehicle.fuel, 20)
+
+    def test__str__method(self):
+        self.assertEqual("The vehicle has 100.5 "+
+               "horse power with 50.5 fuel left and 1.25 fuel consumption", self.vehicle.__str__())
+
+if __name__ == '__main__':
+    main()
