@@ -1,0 +1,116 @@
+class Hero:
+    username: str
+    health: float
+    damage: float
+    level: int
+
+    def __init__(self, username: str, level: int, health: float, damage: float):
+        self.username = username
+        self.level = level
+        self.health = health
+        self.damage = damage
+
+    def battle(self, enemy_hero):
+        if enemy_hero.username == self.username:
+            raise Exception("You cannot fight yourself")
+
+        if self.health <= 0:
+            raise ValueError("Your health is lower than or equal to 0. You need to rest")
+
+        if enemy_hero.health <= 0:
+            raise ValueError(f"You cannot fight {enemy_hero.username}. He needs to rest")
+
+        player_damage = self.damage * self.level
+        enemy_hero_damage = enemy_hero.damage * enemy_hero.level
+
+        self.health -= enemy_hero_damage
+        enemy_hero.health -= player_damage
+
+        if self.health <= 0 and enemy_hero.health <= 0:
+            return "Draw"
+
+        if enemy_hero.health <= 0:
+            self.level += 1
+            self.health += 5
+            self.damage += 5
+            return "You win"
+
+        enemy_hero.level += 1
+        enemy_hero.health += 5
+        enemy_hero.damage += 5
+        return "You lose"
+
+    def __str__(self):
+        return f"Hero {self.username}: {self.level} lvl\n" \
+               f"Health: {self.health}\n" \
+               f"Damage: {self.damage}\n"
+
+_________
+
+
+from unittest import TestCase, main
+from project.hero import Hero
+
+class HeroTest(TestCase):
+    def setUp(self) -> None:
+        self.hero = Hero("conan", 1, 100, 10)
+        self.bad_hero = Hero("orc", 1, 50, 5)
+
+    def test_battle_invalid_input_name(self):
+        self.bad_hero.username = "conan"
+        with self.assertRaises(Exception) as ex:
+            self.hero.battle(self.bad_hero)
+
+        self.assertEqual("You cannot fight yourself", str(ex.exception))
+
+    def test_battle_negative_health(self):
+        self.hero.health = 0
+        with self.assertRaises(ValueError) as ve:
+            self.hero.battle(self.bad_hero)
+        self.assertEqual("Your health is lower than or equal to 0. You need to rest", str(ve.exception))
+
+    def test_battle_with_hero_negative_health(self):
+        self.bad_hero.health = 0
+        with self.assertRaises(ValueError) as ve:
+            self.hero.battle(self.bad_hero)
+        self.assertEqual("You cannot fight orc. He needs to rest", str(ve.exception))
+
+    def test_battle_all_good_hero_stats(self):
+        self.hero.battle(self.bad_hero)
+        self.assertEqual(self.hero.health, 95)
+
+    def test_test_enemy_stats_after_battle(self):
+        self.hero.battle(self.bad_hero)
+        self.assertEqual(self.bad_hero.health, 45)
+
+    def test_battle_if_both_under_zero(self):
+        self.hero = Hero("conan", 1, 1, 1)
+        self.bad_hero = Hero("ork", 1, 1, 1)
+
+        self.assertEqual("Draw", self.hero.battle(self.bad_hero))
+
+    def test_when_hero_wins(self):
+        self.bad_hero.health = 1
+        result = self.hero.battle(self.bad_hero)
+        self.assertEqual(self.hero.level, 2)
+        self.assertEqual(self.hero.damage, 15)
+        self.assertEqual(self.hero.health, 100)
+        self.assertEqual(result, "You win")
+
+    def test_when_bad_hero_wins(self):
+        self.hero.health = 1
+        result = self.hero.battle(self.bad_hero)
+        self.assertEqual(self.bad_hero.level, 2)
+        self.assertEqual(self.bad_hero.damage, 10)
+        self.assertEqual(self.bad_hero.health, 45)
+        self.assertEqual(result, "You lose")
+
+    def test_str_method(self):
+        self.assertEqual(self.hero.__str__(),
+                         "Hero conan: 1 lvl\n" 
+                         "Health: 100\n" 
+                         "Damage: 10\n"
+                         )
+
+if __name__ == '__main__':
+    main()
