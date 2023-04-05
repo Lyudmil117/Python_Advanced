@@ -1,0 +1,110 @@
+class Movie:
+    def __init__(self, name: str, year: int, rating: float):
+        self.name = name
+        self.year = year
+        self.rating = rating
+        self.actors = []
+
+    @property
+    def name(self):
+        return self.__name
+
+    @name.setter
+    def name(self, value):
+        if value == '':
+            raise ValueError("Name cannot be an empty string!")
+        self.__name = value
+
+    @property
+    def year(self):
+        return self.__year
+
+    @year.setter
+    def year(self, value):
+        if value < 1887:
+            raise ValueError("Year is not valid!")
+        self.__year = value
+
+    def add_actor(self, name: str):
+        if name not in self.actors:
+            self.actors.append(name)
+        else:
+            return f"{name} is already added in the list of actors!"
+
+    def __gt__(self, other):
+        if self.rating > other.rating:
+            return f'"{self.name}" is better than "{other.name}"'
+        else:
+            return f'"{other.name}" is better than "{self.name}"'
+
+    def __repr__(self):
+        return f"Name: {self.name}\n" \
+               f"Year of Release: {self.year}\n" \
+               f"Rating: {self.rating:.2f}\n" \
+               f"Cast: {', '.join(self.actors)}"
+               
+               
+      ----------------------
+      from project.movie import Movie
+
+from unittest import TestCase, main
+
+class TestMovie(TestCase):
+    def setUp(self) -> None:
+        self.movie = Movie("Roki", 1995, 5.5)
+
+    def test_correct_init(self):
+        self.assertEqual("Roki", self.movie.name)
+        self.assertEqual(1995, self.movie.year)
+        self.assertEqual(5.5, self.movie.rating)
+        self.assertEqual([], self.movie.actors)
+
+    def test_incorrect_name(self):
+        with self.assertRaises(ValueError) as ve:
+            self.movie.name = ""
+        self.assertEqual("Name cannot be an empty string!", str(ve.exception))
+
+    def test_correct_new_name(self):
+        self.movie.name = "Rambo"
+        self.assertEqual("Rambo", self.movie.name)
+
+    def test_incorrect_year(self):
+        with self.assertRaises(ValueError) as ve:
+            self.movie.year = 681
+        self.assertEqual(str(ve.exception), "Year is not valid!")
+
+    def test_correct_input_year(self):
+        self.movie.year = 2000
+        self.assertEqual(self.movie.year, 2000)
+
+    def test_adding_existing_actor(self):
+        self.movie.actors.append("rock")
+        result = self.movie.add_actor("rock")
+        self.assertEqual(result,"rock is already added in the list of actors!")
+
+    def test_add_actor_correct_input(self):
+        self.movie.add_actor("rock")
+        self.assertEqual(self.movie.actors, ["rock"])
+
+    def test_gt_second_movie_better(self):
+        m1 = Movie("The Lord of the Rings: The Return of the King", 2003, 9.0)
+        m2 = Movie("The Godfather", 1972, 9.2)
+        self.assertEqual(m1 > m2, '"The Godfather" is better than "The Lord of the Rings: The Return of the King"')
+
+
+    def test_gt_first_movie_better(self):
+        m1 = Movie("The Lord of the Rings: The Return of the King", 2003, 9.9)
+        m2 = Movie("The Godfather", 1972, 9.2)
+        self.assertEqual(m1 > m2, '"The Lord of the Rings: The Return of the King" is better than "The Godfather"')
+
+    def test_repr_method(self):
+        self.movie.actors = ["brad pit"]
+        result = self.movie.__repr__()
+        expected = f"Name: Roki\n" \
+               f"Year of Release: 1995\n" \
+               f"Rating: 5.50\n" \
+               f"Cast: brad pit"
+        self.assertEqual(result, expected)
+
+if __name__ == "__main__":
+    main()
